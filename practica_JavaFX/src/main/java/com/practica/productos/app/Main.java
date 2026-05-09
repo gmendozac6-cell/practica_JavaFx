@@ -3,12 +3,12 @@ package com.practica.productos.app;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import com.practica.productos.modelo.Producto;
 import com.practica.productos.servicio.ProductoService;
+import javafx.scene.control.TextArea;
 
 public class Main extends Application {
     ProductoService servicio = new ProductoService();
@@ -16,36 +16,36 @@ public class Main extends Application {
     public void start(Stage stage) {
         TextField campo = new TextField(); 
         Button boton = new Button("Mostrar"); 
-        Label label = new Label(); 
+        TextArea area = new TextArea();
+        area.setEditable(false); // Para que el usuario no pueda borrar los productos manualmente
+        area.setPromptText("Aquí aparecerán tus productos...");
         
         boton.setOnAction(e -> {
     try {
-        // 1. Crear el producto
+        // Creamos y agregamos el producto al servicio
         Producto p = new Producto(campo.getText());
-        
-        // 2. Guardarlo en el servicio (Etapa 5)
         servicio.agregar(p);
-        
-        // 3. Limpiar el campo de texto para el siguiente
-        campo.clear();
-        
-        // 4. Listar todos los productos registrados
-        String texto = "Lista de Productos:\n";
+
+        campo.clear(); // Limpiamos el buscador
+
+        // Construimos el string con la lista completa
+        StringBuilder listado = new StringBuilder("LISTA DE PRODUCTOS:\n");
         for (Producto prod : servicio.listar()) {
-            texto += "- " + prod.getNombre() + "\n";
+            listado.append("- ").append(prod.getNombre()).append("\n");
         }
-        
-        // 5. Mostrar la lista en el label
-        label.setText(texto);
-        label.setStyle("-fx-text-fill: black;");
-        
+
+        // Mostramos en el TextArea
+        area.setText(listado.toString());
+
     } catch (IllegalArgumentException ex) {
-        label.setText(ex.getMessage());
-        label.setStyle("-fx-text-fill: red;");
+        // Para los errores, podrías seguir usando un Label pequeño 
+        // o simplemente imprimirlo en el TextArea para avisar al usuario
+        area.setText("ERROR: " + ex.getMessage());
     }
 });
         
-        VBox layout = new VBox(10, campo, boton, label);
+        VBox layout = new VBox(10, campo, boton, area);
+        layout.setStyle("-fx-padding: 20;");
         
         Scene scene = new Scene(layout, 300, 200);
         stage.setScene(scene);
