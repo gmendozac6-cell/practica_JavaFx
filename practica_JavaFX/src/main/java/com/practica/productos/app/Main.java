@@ -8,8 +8,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import com.practica.productos.modelo.Producto;
+import com.practica.productos.servicio.ProductoService;
 
 public class Main extends Application {
+    ProductoService servicio = new ProductoService();
     @Override
     public void start(Stage stage) {
         TextField campo = new TextField(); 
@@ -18,16 +20,28 @@ public class Main extends Application {
         
         boton.setOnAction(e -> {
     try {
-        // Intentamos crear el producto (aquí se ejecuta la validación)
+        // 1. Crear el producto
         Producto p = new Producto(campo.getText());
         
-        // Si no hubo error, lo mostramos
-        label.setText("Producto: " + p.getNombre());
-        label.setStyle("-fx-text-fill: black;"); 
+        // 2. Guardarlo en el servicio (Etapa 5)
+        servicio.agregar(p);
+        
+        // 3. Limpiar el campo de texto para el siguiente
+        campo.clear();
+        
+        // 4. Listar todos los productos registrados
+        String texto = "Lista de Productos:\n";
+        for (Producto prod : servicio.listar()) {
+            texto += "- " + prod.getNombre() + "\n";
+        }
+        
+        // 5. Mostrar la lista en el label
+        label.setText(texto);
+        label.setStyle("-fx-text-fill: black;");
+        
     } catch (IllegalArgumentException ex) {
-        // Si el nombre estaba vacío, el modelo lanza el error y lo atrapamos aquí
         label.setText(ex.getMessage());
-        label.setStyle("-fx-text-fill: red;"); // Mostrar el error en rojo
+        label.setStyle("-fx-text-fill: red;");
     }
 });
         
