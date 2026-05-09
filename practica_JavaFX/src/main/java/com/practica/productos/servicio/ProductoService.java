@@ -16,4 +16,8 @@ public class ProductoService {
         // Devolvemos una copia de la lista para proteger la original
         return new ArrayList<>(productos);
     }
+    public void eliminar(String nombre) {
+    // Busca en la lista y elimina si el nombre coincide (ignorando mayúsculas/minúsculas)
+    productos.removeIf(p -> p.getNombre().equalsIgnoreCase(nombre));
+}
 }

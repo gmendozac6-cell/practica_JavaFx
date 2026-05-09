@@ -17,29 +17,58 @@ public class Main extends Application {
         TextField campo = new TextField(); 
         Button boton = new Button("Mostrar"); 
         TextArea area = new TextArea();
-        area.setEditable(false); // Para que el usuario no pueda borrar los productos manualmente
+        area.setEditable(false); 
         area.setPromptText("Aquí aparecerán tus productos...");
         
-        boton.setOnAction(e -> {
+        Button botonEliminar = new Button("Eliminar");
+        botonEliminar.setStyle("-fx-base: #ff6666;"); 
+    botonEliminar.setOnAction(e -> {
+    String nombre = campo.getText();
+    if (!nombre.trim().isEmpty()) {
+        servicio.eliminar(nombre); // Llamamos al servicio
+        campo.clear();
+        
+        // Actualizamos el TextArea con la nueva lista
+        StringBuilder listado = new StringBuilder("LISTA DE PRODUCTOS:\n");
+        for (Producto prod : servicio.listar()) {
+            listado.append("- ").append(prod.getNombre()).append("\n");
+        }
+        area.setText(listado.toString());
+    }
+});
+        botonEliminar.setOnAction(e -> {
+    String nombre = campo.getText();
+    if (!nombre.trim().isEmpty()) {
+        servicio.eliminar(nombre); // Llamamos al servicio
+        campo.clear();
+        
+        // Actualizamos el TextArea con la nueva lista
+        StringBuilder listado = new StringBuilder("LISTA DE PRODUCTOS:\n");
+        for (Producto prod : servicio.listar()) {
+            listado.append("- ").append(prod.getNombre()).append("\n");
+        }
+        area.setText(listado.toString());
+    }
+});
+            
     try {
-        // Creamos y agregamos el producto al servicio
+        
         Producto p = new Producto(campo.getText());
         servicio.agregar(p);
 
-        campo.clear(); // Limpiamos el buscador
+        campo.clear(); 
 
-        // Construimos el string con la lista completa
+        
         StringBuilder listado = new StringBuilder("LISTA DE PRODUCTOS:\n");
         for (Producto prod : servicio.listar()) {
             listado.append("- ").append(prod.getNombre()).append("\n");
         }
 
-        // Mostramos en el TextArea
+        
         area.setText(listado.toString());
 
     } catch (IllegalArgumentException ex) {
-        // Para los errores, podrías seguir usando un Label pequeño 
-        // o simplemente imprimirlo en el TextArea para avisar al usuario
+        
         area.setText("ERROR: " + ex.getMessage());
     }
 });
@@ -55,4 +84,5 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+    
 }
